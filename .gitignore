@@ -1,0 +1,10 @@
+
+.vscode
+config.py
+.env
+__pycache__
+sample.py
+path/
+.ipynb_checkpoints
+.ipynb_checkpoints/
+**/*.ipynb_checkpoints/
