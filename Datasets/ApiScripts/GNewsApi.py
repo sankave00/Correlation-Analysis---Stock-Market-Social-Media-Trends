@@ -11,11 +11,11 @@ def get_current_news_data(query, extra_params):
     """Returns the current news data fetched from NewsAPI."""
 
 
-    NEWSAPI_API_KEY = os.getenv("NEWSAPI_API_KEY")
-    print(NEWSAPI_API_KEY)
-    url = "https://newsapi.org/v2/everything?"
+    GNEWSAPI_API_KEY = os.getenv("GNEWS_API_KEY")
+    print(GNEWSAPI_API_KEY)
+    url = "https://gnews.io/api/v4/search?"
 
-    querystring = {"apiKey":NEWSAPI_API_KEY,"q":query,"from":"2021-01-01","sort_by":"relevancy"}
+    querystring = {"apikey":GNEWSAPI_API_KEY,"q":query,"from":"2021-03-04", "to" : "2021-03-06", "sort_by":"relevance", "lang":"en"}
 
 
     extracted_news = []
@@ -23,11 +23,15 @@ def get_current_news_data(query, extra_params):
     while True:
         req = requests.get(url, querystring)
         response = req.json()
-        print(response)
-        tot_response = min(100,response['totalResults'])
-        for i in range(tot_response):
-            extracted_news.append(response['articles'][i]["title"])
+        tot_response = min(100,response['totalArticles'])
+        print(response['totalArticles'])
+        cnt = 0
+        for i in response['articles']:
+            cnt = cnt +1
+            print(i)
+            extracted_news.append(i["title"])
         else:
+            print(cnt)
             break
     
     # print(extracted_news)
@@ -68,20 +72,24 @@ if __name__ == "__main__":
 
     print("Started collecting data from the APIs...")
 
-    for category in keywords.keys():
-        responses = set()
-        extra_params = {}
+    response = get_current_news_data("vaccine",extra_params={})
+    write_to_csv(response, "Health")
 
-        print("\n***Currently parsing the '{}' category***".format(category))
-        keywords_list = keywords[category]
 
-        for keyword in keywords_list:
-            print("  ***Currently parsing the '{}' keyword***".format(keyword))
-            response = get_current_news_data(keyword, extra_params)
+    # for category in keywords.keys():
+    #     responses = set()
+    #     extra_params = {}
 
-            for resp in response:   # To prevent duplicates
-                responses.add(resp)
+    #     print("\n***Currently parsing the '{}' category***".format(category))
+    #     keywords_list = keywords[category]
 
-        write_to_csv(responses, category)
+    #     for keyword in keywords_list:
+    #         print("  ***Currently parsing the '{}' keyword***".format(keyword))
+    #         response = get_current_news_data(keyword, extra_params)
+
+    #         for resp in response:   # To prevent duplicates
+    #             responses.add(resp)
+
+    #     write_to_csv(responses, category)
 
     print("Finished collecting data from the API.")

@@ -17,14 +17,14 @@ def get_stock_data(ticker, date):
 
     req = requests.get(url, params)
     response = req.json()
-
+    print(response)
     return response
 
 
 def write_to_csv(data, file="stockdataset.csv", category = "None"):
     """Writes the content with category to csv file to make the dataset."""
 
-    filepath = os.path.join(os.path.dirname(__file__),f"../{file}")
+    filepath = os.path.join(os.path.dirname(__file__),f"../New Datasets/{file}")
     if os.path.exists(filepath):
         if os.stat(filepath).st_size != 0:
             filemode = "a+"
@@ -61,11 +61,11 @@ if __name__ == "__main__":
     }
 
     ticker_list = {
-        "Health": ["UNH","PFE","TDOC"],
-        "Finance": ["MS","C","JPM"],
-        "EVs": ["TSLA", "NIO","LCID"],
-        "Telecom":["AMT","T","VZ"],
-        "Tech": ["INTC", "META","GOOGL","AAPL"]
+        "Health": ["UNH"],
+        "Finance": ["MS"],
+        "EVs": ["TSLA"],
+        "Telecom":["AMT"],
+        "Tech": ["GOOGL"]
         
     }
     
@@ -73,9 +73,9 @@ if __name__ == "__main__":
     # x = cur_date.year - 2
     # start_date = datetime.datetime(x, cur_date.month, cur_date.day)
     # next_date = start_date + datetime.timedelta(days=5)
-    next_date = datetime.datetime(2023, 1, 30)
-    
-    while(next_date <= datetime.datetime.now()):
+    next_date = datetime.datetime(2023, 1, 3)
+    end_date = datetime.datetime(2023, 1, 31)
+    while(next_date <= end_date):
         
         print(f"Date on process: {next_date}")
         
@@ -87,6 +87,6 @@ if __name__ == "__main__":
                 print(f"\t\t ** Fetching {ticker} Stock deets")
                 data = get_stock_data(ticker, next_date.strftime("%Y-%m-%d"))
                 write_to_csv(data=data, file=file, category=category)
-                sleep(12)
+        sleep(60)
         
         next_date = next_date + datetime.timedelta(days=1)

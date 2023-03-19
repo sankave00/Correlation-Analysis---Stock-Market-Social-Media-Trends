@@ -41,7 +41,7 @@ def get_tweet_data(query_params, page_count = 10):
     print(f'\t\t *** Extracted {len(extracted_tweets)} tweets ***')
     return extracted_tweets
 
-def write_to_csv(data, file="tweetdataset.csv", category = "None", date=datetime.datetime.now()):
+def write_to_csv(data, file, category = "None", date=datetime.datetime.now()):
     """Writes the content with category to csv file to make the dataset."""
 
     filepath = os.path.join(os.path.dirname(__file__),f"../{file}")
@@ -70,7 +70,7 @@ def write_to_csv(data, file="tweetdataset.csv", category = "None", date=datetime
 if __name__ == "__main__":
 
     load_dotenv()
-    file = "tweetdataset.csv"
+    file = "tweetdata111.csv"
     page_count = 10
       
     bearer_token = os.getenv("TWITTER_API_BEARER_TOKEN")
@@ -78,25 +78,23 @@ if __name__ == "__main__":
     url = "https://api.twitter.com/2/tweets/search/recent"
 
     keywords = {
-        "Health": ["vaccine", "hospital", "pharmaceuticals"],
-        "Finance": ["share", "stock price","bank"],
-        "EVs": ["tesla motors", "ather", "EVs"],
-        "Telecom": ["5G", "Jio", "Airtel"],
-        "Tech": ["Apple", "Facebook", "Google", "Amazon"]
+        "Health": ["tesla","#TSLA"],
+        
     }
     
     
-    next_date = datetime.datetime(2023, 2, 3)
+    next_date = datetime.datetime(2023, 3, 14)
     
-    end_date = datetime.datetime(2023, 2, 5)
+    end_date = datetime.datetime(2023, 3, 15)
     
     query_params = {}
-    query_params['tweet.fields'] = 'created_at,lang,source'
+    query_params['tweet.fields'] = 'created_at,lang,source,public_metrics'
     
     while(next_date < end_date):
         
         query_params['start_time'] = f'{next_date.strftime("%Y-%m-%d")}T00:00:00Z'
         query_params['end_time'] = f'{next_date.strftime("%Y-%m-%d")}T23:59:59Z'
+        query_params['max_results'] = 100
         print(query_params)
 
         print(f"Fetching data for {next_date.strftime('%Y-%m-%d')}")
@@ -110,8 +108,8 @@ if __name__ == "__main__":
             for keyword in keywords_list:
                 print(f'\t\tCollecting {keyword} tweets')
 
-                query_params['query'] = f"( -is:retweet #{keyword} -has:links)"
-                    
+                query_params['query'] = f"( -is:retweet {keyword} -has:links -lang:en)"
+                print(query_params)
                 response = get_tweet_data(query_params, page_count)
                 
                 for resp in response:   # to prevent duplicates

@@ -80,6 +80,10 @@ if __name__ == "__main__":
         "Tech": ["Apple", "Facebook", "Google", "Amazon"]
     }
 
+    keywords = {
+        "Health": ["vaccine"]
+    }
+
     for category in keywords.keys():
         responses = set()
         keywords_list = keywords[category]
@@ -96,8 +100,12 @@ if __name__ == "__main__":
             }
             res = requests.get("https://oauth.reddit.com/r/subreddit/search",
                         headers=headers,params=params)
+            cnt = 0
             for post in res.json()['data']['children']:
-                responses.add(post['data']['title'])
+                if(cnt==0):
+                    print(post['data'])
+                    responses.add(post['data']['title'])
+                    cnt = cnt + 1
                
         write_to_csv(responses, file, category)
         print()
