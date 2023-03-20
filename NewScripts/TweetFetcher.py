@@ -128,9 +128,9 @@ def main(file, page_count=10):
     load_dotenv()
 
     global bearer_token
-    bearer_token = os.getenv("TWITTER_API_BEARER_TOKEN")
+    bearer_token = os.getenv("TWITTER_API_ACAD_BEARER_TOKEN")
     global search_url
-    search_url = "https://api.twitter.com/2/tweets/search/recent"
+    search_url = "https://api.twitter.com/2/tweets/search/all"
 
     old_keywords = {
         "Crypto": ["bitcoin", "dogecoin", "crypto"],
@@ -156,21 +156,28 @@ def main(file, page_count=10):
     }
 
     keywords = {
-        "Health": ["UnitedHealth", "hospital","vaccine","heath insurance","UNH"],
+        "Health": ["United Health", "hospital","heath insurance","UNH"],
         "Finance": ["share","Morgan Stanley","stock price", "investment" ],
         "EVs": ["tesla","EVs","electric vehicle"],
         "Telecom": ["5G", "broadband", "mobile network","American Tower Corp"],
-        "Tech": ["Google",""]
+        "Tech": ["Google","Alphabet"]
+    }
+
+    twitter_keywords = {
+        "Health": ["UNH" ,"health insurance","#UNH"],
+        "Finance": ["Morgan Stanley", "investment","#MS" ],
+        "EVs": ["tesla","EVs","#TSLA"],
+        "Tech": ["Google","#GOOGL","#GOOG"]
     }
 
     #next_date = datetime.datetime(2020, 4, 7)
-    next_date = datetime.datetime(2023, 3, 13)
+    next_date = datetime.datetime(2022, 12, 10)
 
     #Uncomment below line to fetch data from another date in case of failure
     #next_date = datetime.datetime(2022, 2, 16)
 
     #end_date = datetime.datetime(2022, 3, 30)
-    end_date = datetime.datetime(2023, 3, 14)
+    end_date = datetime.datetime(2023, 1, 31)
 
     while(next_date <= end_date):
         # print(type(next_date))
@@ -178,13 +185,13 @@ def main(file, page_count=10):
         query_params['tweet.fields'] = 'created_at,lang,source,public_metrics'
         query_params['start_time'] = f'{next_date.strftime("%Y-%m-%d")}T00:00:00Z'
         query_params['end_time'] = f'{next_date.strftime("%Y-%m-%d")}T23:59:59Z'
-        query_params['max_results'] = 100
+        query_params['max_results'] = 250
 
         print(f"Fetching data for {next_date.strftime('%Y-%m-%d')}")
 
-        for category in keywords.keys():
+        for category in twitter_keywords.keys():
 
-            keywords_list = keywords[category]
+            keywords_list = twitter_keywords[category]
 
             print(f'\tCollecting {category} tweets')
 
