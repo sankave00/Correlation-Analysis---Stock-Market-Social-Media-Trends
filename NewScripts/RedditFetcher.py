@@ -6,21 +6,42 @@ import time
 from time import sleep
 import datetime
 import os
-
+import string
+import re
 
 def get_pushshift_data(query, after, before, sub):
     url = 'https://api.pushshift.io/reddit/search/submission/?title=' + str(query) + '&size=50&after=' + str(
-        after) + '&before=' + str(before) +'&sort=desc' + '&sort_type=score'
+        after) + '&before=' + str(before)
     print(url)
     
     r = requests.get(url)
+    if r.status_code!=200:
+        return {}
+        #raise Exception(r.status_code, r.text)
     data = json.loads(r.text)
     return data['data']
+
+def format_response(data_point):
+    # remove non-printable characters
+    data_point = ''.join(filter(lambda x: x in string.printable, data_point))
+
+    temp = data_point
+
+
+    data_point = temp
+
+    data_point = data_point.replace('\n', ' ').replace('\r', '').replace('\t', ' ').replace(
+        '&gt', ' > ').replace('&lt', ' < ').replace('&amp', ' & ').replace('&quot', ' ').replace('&apos', ' ')
+    data_point = re.sub(r'\bhttps://t.co/[^ ]*\b', ' ', data_point)
+    data_point = ' '.join(data_point.split())
+
+    return data_point
 
 
 def collect_sub_data(subm):
     sub_data = list()  # list to store data points
     title = subm['title']
+    title=format_response(title)
     # url = subm['url']
     # try:
     #     # if flair is available then get it, else set 'NaN'
@@ -72,9 +93,9 @@ def write_subs_to_file(category,file):
 if __name__ == '__main__':
     # Download reddit posts from sub_reddit with keywords given by key_word
 
-    output_filename = '_redditdata.csv'
+    output_filename = 'redditdata.csv'
     # search all the posts from start_date to end_date overall
-    start_date = datetime.datetime(2023, 1, 1, 0)
+    start_date = datetime.datetime(2022, 12, 1, 0)
     end_date = datetime.datetime(2023, 1, 31, 0)
 
     # in each itration get reddit posts for one day, to avoid getting blocked by server
@@ -84,7 +105,7 @@ if __name__ == '__main__':
     before_date = start_date + one_day
     before = str(int(before_date.timestamp()))
 
-    keywords = {
+    old_keywords = {
         "Health": ["UnitedHealth", "hospital","vaccine","heath insurance","UNH"],
         "Finance": ["share","Morgan Stanley","stock price", "investment" ],
         "EVs": ["tesla","EVs","electric vehicle"],
@@ -92,7 +113,14 @@ if __name__ == '__main__':
         "Tech": ["Google",""]
     }
 
-    while after_date < end_date:
+    keywords = {
+        "Health": ["'United Health'","'health insurance'","UNH"],
+        "Finance": ["'Morgan Stanley'","'stock price'", "investment" ],
+        "EVs": ["tesla","EVs","'electric vehicle'","TSLA"],
+        "Tech": ["Google","'Alphabet Inc.'"]
+    }
+
+    while after_date <= end_date:
         print('-' * 80)
         print(after_date, ' -> ', before_date)
         print('-' * 80)
