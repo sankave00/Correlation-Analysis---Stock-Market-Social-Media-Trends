@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
     output_filename = 'redditdata.csv'
     # search all the posts from start_date to end_date overall
-    start_date = datetime.datetime(2022, 12, 1, 0)
+    start_date = datetime.datetime(2022, 11, 1, 0)
     end_date = datetime.datetime(2023, 1, 31, 0)
 
     # in each itration get reddit posts for one day, to avoid getting blocked by server
