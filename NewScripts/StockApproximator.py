@@ -66,14 +66,14 @@ def write_to_csv(file,category, ticker, open_date_map, close_date_map, high_date
     contents = []
     
     for date in open_date_map.keys():
-        contents.append((category, ticker, date, open_date_map[date], close_date_map[date],'','', high_date_map[date], low_date_map[date]))
+        contents.append((category, ticker, date, open_date_map[date], close_date_map[date], high_date_map[date], low_date_map[date]))
     
     with open(filepath, filemode) as data_csv:
     
         csv_writer = csv.writer(data_csv, delimiter='\t')
         
         if(filemode == "w+"):
-            csv_writer.writerow(["CATEGORY", "TICKER", "DATE", "OPEN", "CLOSE", "PRE_MARKET", "AFTER_HOURS", "HIGH", "LOW"])
+            csv_writer.writerow(["CATEGORY", "TICKER", "DATE", "OPEN", "CLOSE", "HIGH", "LOW"])
         
         for row in contents:
           csv_writer.writerow(row)
