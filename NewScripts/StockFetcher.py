@@ -48,7 +48,7 @@ def write_to_csv(data, file="stockdataset.csv", category = "None"):
 
 if __name__ == "__main__":
 
-    file = "StockData.csv"
+    file = "NewStockData.csv"
 
     load_dotenv()
 
@@ -64,16 +64,14 @@ if __name__ == "__main__":
         "Health": ["UNH"],
         "Finance": ["MS"],
         "EVs": ["TSLA"],
-        "Telecom":["AMT"],
-        "Tech": ["GOOGL"]
-        
+        "Tech": ["GOOGL"]   
     }
     
     # cur_date = datetime.datetime.now()
     # x = cur_date.year - 2
     # start_date = datetime.datetime(x, cur_date.month, cur_date.day)
     # next_date = start_date + datetime.timedelta(days=5)
-    next_date = datetime.datetime(2023, 1, 3)
+    next_date = datetime.datetime(2023, 1, 1)
     end_date = datetime.datetime(2023, 1, 31)
     while(next_date <= end_date):
         
@@ -87,6 +85,6 @@ if __name__ == "__main__":
                 print(f"\t\t ** Fetching {ticker} Stock deets")
                 data = get_stock_data(ticker, next_date.strftime("%Y-%m-%d"))
                 write_to_csv(data=data, file=file, category=category)
-        sleep(60)
+                sleep(12)
         
         next_date = next_date + datetime.timedelta(days=1)
