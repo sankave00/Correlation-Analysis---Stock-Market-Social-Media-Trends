@@ -8,11 +8,11 @@ connection = sqlite3.connect(os.path.join(os.path.dirname(__file__), f'fypdbmain
 # Creating a cursor object to execute SQL queries on a database table
 cursor = connection.cursor()
 
-FILENAME = "ApproximatedStockData.csv"
+FILENAME = "ApproximatedStockDataFinal.csv"
 TABLENAME = "stockdata"
 
 # Table Definition
-create_table = '''CREATE TABLE IF NOT EXISTS stockdata(
+create_table = f'''CREATE TABLE IF NOT EXISTS {TABLENAME}(
 				category TEXT,
 				ticker TEXT,
 				stockDate DATE,
@@ -30,14 +30,14 @@ file = open(os.path.join(os.path.dirname(__file__),f"../New Datasets/{FILENAME}"
 contents = csv.reader(file, delimiter='\t')
 # SQL query to insert data into the tweets table
 try:
-	insert_records = "INSERT INTO stockdata (category, ticker, stockDate, open, close, high, low) VALUES(?, ?, ?, ?, ?, ?, ?)"
+	insert_records = f"INSERT INTO {TABLENAME} (category, ticker, stockDate, open, close, high, low) VALUES(?, ?, ?, ?, ?, ?, ?)"
  	# Importing the contents of the file into our tweets table
 	cursor.executemany(insert_records, contents)
 except sqlite3.Error as error:
     print({error})
     pass
 try:
-	delete_header = "DELETE from stockData where category = 'CATEGORY'"
+	delete_header = f"DELETE from {TABLENAME} where category = 'Category'"
 	cursor.execute(delete_header)
 except sqlite3.Error as error:
     print({error})
