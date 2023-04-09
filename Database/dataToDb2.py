@@ -46,7 +46,7 @@ except sqlite3.Error as error:
     print({error})
     pass
 try:
-	delete_header = "DELETE from stockData where category = 'Category'"
+	delete_header = f"DELETE from {TABLENAME} where category = 'Category'"
 	cursor.execute(delete_header)
 except sqlite3.Error as error:
     print({error})
