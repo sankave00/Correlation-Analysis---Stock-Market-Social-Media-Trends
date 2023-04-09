@@ -8,9 +8,9 @@ connection = sqlite3.connect(os.path.join(os.path.dirname(__file__), f'fypdbmain
 # Creating a cursor object to execute SQL queries on a database table
 cursor = connection.cursor()
 
-FILENAME1 = "Health_tweetdata.csv"
-FILENAME2 = "Health_redditdata.csv"
-TABLENAME = "healthdata"
+FILENAME1 = "Finance_tweetdata.csv"
+FILENAME2 = "Finance_redditdata.csv"
+TABLENAME = "financedata"
 
 # Table Definition
 create_table = f'''CREATE TABLE IF NOT EXISTS {TABLENAME}(
@@ -46,7 +46,7 @@ except sqlite3.Error as error:
     print({error})
     pass
 try:
-	delete_header = "DELETE from stockData where category = 'CATEGORY'"
+	delete_header = "DELETE from stockData where category = 'Category'"
 	cursor.execute(delete_header)
 except sqlite3.Error as error:
     print({error})
