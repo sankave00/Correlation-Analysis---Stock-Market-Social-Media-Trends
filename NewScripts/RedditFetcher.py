@@ -95,8 +95,8 @@ if __name__ == '__main__':
 
     output_filename = 'redditdata.csv'
     # search all the posts from start_date to end_date overall
-    start_date = datetime.datetime(2022, 11, 1, 0)
-    end_date = datetime.datetime(2023, 1, 31, 0)
+    start_date = datetime.datetime(2023, 2, 1, 0)
+    end_date = datetime.datetime(2023, 3, 31, 0)
 
     # in each itration get reddit posts for one day, to avoid getting blocked by server
     one_day = datetime.timedelta(hours=24)
@@ -115,9 +115,9 @@ if __name__ == '__main__':
 
     keywords = {
         "Health": ["'United Health'","'health insurance'","UNH"],
-        "Finance": ["'Morgan Stanley'","'stock price'", "investment" ],
+        "Finance": ["'Morgan Stanley'","'stock price'", "investment","MS" ],
         "EVs": ["tesla","EVs","'electric vehicle'","TSLA"],
-        "Tech": ["Google","'Alphabet Inc.'"]
+        "Tech": ["Google","'Alphabet Inc.'","GOOGL"]
     }
 
     while after_date <= end_date:

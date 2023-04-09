@@ -164,20 +164,20 @@ def main(file, page_count=5):
     }
 
     twitter_keywords = {
-        "Health": ["UNH" ,"health insurance","#UNH"],
-        "Finance": ["Morgan Stanley", "investment","#MS" ],
-        "EVs": ["tesla","EVs","#TSLA"],
-        "Tech": ["Google","#GOOGL","#GOOG"]
+       "Health": ["United Health" ,"health insurance","#UNH","$UNH"],
+        "Finance": ["Morgan Stanley", "investment","#MS", "$MS" ],
+        "EVs": ["tesla","EVs","#TSLA", "$TSLA"],
+        "Tech": ["Google","#GOOGL","#GOOG","$GOOGL","$GOOG"]
     }
 
     #next_date = datetime.datetime(2020, 4, 7)
-    next_date = datetime.datetime(2022, 12, 10)
+    next_date = datetime.datetime(2023, 2, 13)
 
     #Uncomment below line to fetch data from another date in case of failure
     #next_date = datetime.datetime(2022, 2, 16)
 
     #end_date = datetime.datetime(2022, 3, 30)
-    end_date = datetime.datetime(2023, 1, 31)
+    end_date = datetime.datetime(2023, 3, 31)
 
     while(next_date <= end_date):
         # print(type(next_date))
