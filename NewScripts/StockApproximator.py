@@ -73,37 +73,37 @@ def write_to_csv(file,category, ticker, open_date_map, close_date_map, high_date
         csv_writer = csv.writer(data_csv, delimiter='\t')
         
         if(filemode == "w+"):
-            csv_writer.writerow(["CATEGORY", "TICKER", "DATE", "OPEN", "CLOSE", "HIGH", "LOW"])
+            csv_writer.writerow(["Category", "Ticker", "Date", "Open", "Close", "High", "Low"])
         
         for row in contents:
           csv_writer.writerow(row)
         print('Succesfully created new file')
         data_csv.close()
 
-file = 'ApproximatedStockData.csv'
-filepath = os.path.join(os.path.dirname(__file__),f"../New Datasets/NewStockData.csv")
+file = 'ApproximatedStockDataFinal.csv'
+filepath = os.path.join(os.path.dirname(__file__),f"../New Datasets/FinalStockData.csv")
 df = pd.read_csv(filepath,sep='\t')
-g_df = df.groupby('TICKER')
+g_df = df.groupby('Ticker')
 print(g_df.head())
-print("unique",df.TICKER.unique())
+print("unique",df.Ticker.unique())
 
-progress_bar = enumerate(df.TICKER.unique())
+progress_bar = enumerate(df.Ticker.unique())
 
 for i, ticker in progress_bar:
     temp_df = g_df.get_group(ticker)
     
-    category = temp_df['CATEGORY'].unique()[0]
+    category = temp_df['Category'].unique()[0]
     
     data_dict_list = temp_df.to_dict('records')
-    existing_dates = temp_df['DATE'].to_list()
+    existing_dates = temp_df['Date'].to_list()
     
     existing_dates = [datetime.strptime(date, '%Y-%m-%d') for date in existing_dates]
     
     sorted(existing_dates)
-    open_date_map = dict(zip(temp_df.DATE, temp_df.OPEN))
-    close_date_map = dict(zip(temp_df.DATE, temp_df.CLOSE))
-    high_date_map = dict(zip(temp_df.DATE, temp_df.HIGH))
-    low_date_map = dict(zip(temp_df.DATE, temp_df.LOW))
+    open_date_map = dict(zip(temp_df.Date, temp_df.Open))
+    close_date_map = dict(zip(temp_df.Date, temp_df.Close))
+    high_date_map = dict(zip(temp_df.Date, temp_df.High))
+    low_date_map = dict(zip(temp_df.Date, temp_df.Low))
 
     open_date_map, close_date_map, high_date_map, low_date_map = approximate_values(open_date_map, close_date_map, high_date_map, low_date_map, existing_dates)
     write_to_csv(file,category, ticker, open_date_map, close_date_map, high_date_map, low_date_map)

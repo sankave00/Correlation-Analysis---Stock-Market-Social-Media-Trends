@@ -51,7 +51,7 @@ def check_api_call_count():
         start_time = time()
 
 
-def get_tweet_data(query_params, page_count=10):
+def get_tweet_data(query_params, page_count=5):
     global countApiCalls
     extracted_tweets = []
 
@@ -124,7 +124,7 @@ def format_response(data_point):
 
     return data_point
 
-def main(file, page_count=10):
+def main(file, page_count=5):
     load_dotenv()
 
     global bearer_token
@@ -185,7 +185,7 @@ def main(file, page_count=10):
         query_params['tweet.fields'] = 'created_at,lang,source,public_metrics'
         query_params['start_time'] = f'{next_date.strftime("%Y-%m-%d")}T00:00:00Z'
         query_params['end_time'] = f'{next_date.strftime("%Y-%m-%d")}T23:59:59Z'
-        query_params['max_results'] = 250
+        query_params['max_results'] = 100
 
         print(f"Fetching data for {next_date.strftime('%Y-%m-%d')}")
 
@@ -223,5 +223,5 @@ def main(file, page_count=10):
 
 if __name__ == "__main__":
     filename = "_tweetdata.csv"
-    page_count = 10
+    page_count = 5
     main(filename, page_count)
