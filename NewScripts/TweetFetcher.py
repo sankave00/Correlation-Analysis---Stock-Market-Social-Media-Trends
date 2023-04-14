@@ -85,7 +85,7 @@ def get_tweet_data(query_params, page_count=5):
 def write_to_csv(data, file, category="None", date=datetime.datetime.now()):
     """Writes the content with category to csv file to make the dataset."""
 
-    filepath = os.path.join(os.path.dirname(__file__), f"../New Datasets/{category+file}")
+    filepath = os.path.join(os.path.dirname(__file__), f"../../{category+file}")
     if os.path.exists(filepath):
         filemode = "a+"
     else:
@@ -171,13 +171,13 @@ def main(file, page_count=5):
     }
 
     #next_date = datetime.datetime(2020, 4, 7)
-    next_date = datetime.datetime(2023, 2, 13)
+    next_date = datetime.datetime(2022, 6, 6)
 
     #Uncomment below line to fetch data from another date in case of failure
     #next_date = datetime.datetime(2022, 2, 16)
 
     #end_date = datetime.datetime(2022, 3, 30)
-    end_date = datetime.datetime(2023, 3, 31)
+    end_date = datetime.datetime(2022, 7, 31)
 
     while(next_date <= end_date):
         # print(type(next_date))
@@ -222,6 +222,6 @@ def main(file, page_count=5):
 
 
 if __name__ == "__main__":
-    filename = "_tweetdata.csv"
+    filename = "_tweetdataprev.csv"
     page_count = 5
     main(filename, page_count)
