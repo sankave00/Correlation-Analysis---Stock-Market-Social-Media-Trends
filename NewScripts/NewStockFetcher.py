@@ -6,7 +6,7 @@ import datetime
 import time
 import pandas as pd
 
-def write_to_csv(data, file="stockdataset.csv", category = "None"):
+def write_to_csv(data, file="stockdataset.csv", category = "None",ticker="None"):
     """Writes the content with category to csv file to make the dataset."""
     #print("Data", data)
     data.insert(0,'Category',category)
@@ -72,7 +72,7 @@ if __name__ == "__main__":
             query_string = f'https://query1.finance.yahoo.com/v7/finance/download/{ticker}?period1={start_date}&period2={end_date}&interval={interval}&events=history&includeAdjustedClose=true'
             print("Data", query_string)
             df = pd.read_csv(query_string)
-            write_to_csv(data=df, file=file, category=category)
+            write_to_csv(data=df, file=file, category=category,ticker=ticker)
             sleep(10)
 
 

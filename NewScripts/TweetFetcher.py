@@ -32,9 +32,9 @@ def bearer_oauth(r):
     return r
 
 
-def connect_to_endpoint(url, params):
+def connect_to_endpoint(url, params,bearer_token = os.getenv("TWITTER_API_ACAD_BEARER_TOKEN")):
     response = requests.request(
-        "GET", search_url, auth=bearer_oauth, params=params)
+        "GET", url, auth=bearer_oauth, params=params)
     if response.status_code != 200:
         raise Exception(response.status_code, response.text)
     return response.json()
@@ -56,7 +56,9 @@ def get_tweet_data(query_params, page_count=5):
     extracted_tweets = []
 
     check_api_call_count()
-
+    search_url = "https://api.twitter.com/2/tweets/search/all"
+    global bearer_token 
+    bearer_token = os.getenv("TWITTER_API_ACAD_BEARER_TOKEN")
     json_response = connect_to_endpoint(search_url, query_params)
     countApiCalls += 1
 
@@ -85,13 +87,14 @@ def get_tweet_data(query_params, page_count=5):
 def write_to_csv(data, file, category="None", date=datetime.datetime.now()):
     """Writes the content with category to csv file to make the dataset."""
 
-    filepath = os.path.join(os.path.dirname(__file__), f"../../{category+file}")
+    filepath = os.path.join(os.path.dirname(__file__),f"../New Datasets/{category+'_'+file}")
     if os.path.exists(filepath):
         filemode = "a+"
     else:
         filemode = "w+"
 
     # with open(f"../Datasets/{file}", "a") as data_csv:
+
     with open(filepath, filemode) as data_csv:
 
         csv_writer = csv.writer(data_csv, delimiter='\t')

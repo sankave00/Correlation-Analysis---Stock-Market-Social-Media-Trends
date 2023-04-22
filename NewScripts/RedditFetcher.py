@@ -38,7 +38,7 @@ def format_response(data_point):
     return data_point
 
 
-def collect_sub_data(subm):
+def collect_sub_data(subm,sub_stats):
     sub_data = list()  # list to store data points
     title = subm['title']
     title=format_response(title)
@@ -69,7 +69,7 @@ def collect_sub_data(subm):
     sub_stats[sub_id] = sub_data
 
 
-def write_subs_to_file(category,file):
+def write_subs_to_file(category,file,sub_stats):
     upload_count = 0
     
     filepath = os.path.join(os.path.dirname(__file__),f"../New Datasets/{category+'_'+file}")
