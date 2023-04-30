@@ -50,6 +50,8 @@ before = str(int(before_date.timestamp()))
 interval = '1d' # 1d, 1m
 next_open = {}
 
+print()
+print()
 for category in ticker_list.keys():
     print(f"\t ** {category}")
     tickers = ticker_list[category]
@@ -60,75 +62,76 @@ for category in ticker_list.keys():
         df = pd.read_csv(query_string)
         query_string = f'https://query1.finance.yahoo.com/v7/finance/download/{ticker}?period1={next_start_date}&period2={next_end_date}&interval={interval}&events=history&includeAdjustedClose=true'
         next_df = pd.read_csv(query_string)
-        print(f"%%%%%%%%%%{ticker}Close value :    ",next_df['Close'][0])
-        print(f"%%%%%%%%%%{ticker}High value :    ",next_df['High'][0])
-        print(f"%%%%%%%%%%{ticker}Low value :    ",next_df['Low'][0])
+        print(f"%%%%%%%%%%\tActual Close value of {ticker} :    ",next_df['Close'][0],"\t%%%%%%%%%%")
+        print(f"%%%%%%%%%%\tActual High value of {ticker}  :    ",next_df['High'][0],"\t%%%%%%%%%%")
+        print(f"%%%%%%%%%%\tActual Low value  of {ticker}  :    ",next_df['Low'][0],"\t%%%%%%%%%%")
         next_open[category] = next_df['Open'][0]
         StockFetcher.write_to_csv(data=df, file='live-stock.csv', category=category,ticker=ticker)
+        print()
+        print()
+        query_params = {}
+        query_params['tweet.fields'] = 'created_at,lang,source,public_metrics'
+        query_params['start_time'] = f'{start_date2.strftime("%Y-%m-%d")}T00:00:00Z'
+        query_params['end_time'] = f'{start_date2.strftime("%Y-%m-%d")}T23:59:59Z'
+        query_params['max_results'] = 100
 
-    query_params = {}
-    query_params['tweet.fields'] = 'created_at,lang,source,public_metrics'
-    query_params['start_time'] = f'{start_date2.strftime("%Y-%m-%d")}T00:00:00Z'
-    query_params['end_time'] = f'{start_date2.strftime("%Y-%m-%d")}T23:59:59Z'
-    query_params['max_results'] = 100
+        keywords_list = twitter_keywords[category]
 
-    keywords_list = twitter_keywords[category]
+        print(f'\tCollecting {category} tweets')
+        print(f"&&&Fetching data for {start_date2.strftime('%Y-%m-%d')}")
 
-    print(f'\tCollecting {category} tweets')
-    print(f"&&&Fetching data for {start_date2.strftime('%Y-%m-%d')}")
+        for keyword in keywords_list:
+            responses = set()
+            response_dict = dict()
 
-    for keyword in keywords_list:
-        responses = set()
-        response_dict = dict()
+            print(f'\t\tCollecting {keyword} tweets')
 
-        print(f'\t\tCollecting {keyword} tweets')
+            query_params['query'] = f"( -is:retweet {keyword} -has:links)"
+            print(query_params)
+            response = TweetFetcher.get_tweet_data(query_params, 5)
 
-        query_params['query'] = f"( -is:retweet {keyword} -has:links)"
-        print(query_params)
-        response = TweetFetcher.get_tweet_data(query_params, 5)
+            for resp in response:  # add to set to prevent duplicates
+                formatted_resp = TweetFetcher.format_response(resp[0])
+                if formatted_resp not in responses:
+                    responses.add(formatted_resp)
+                    response_dict[formatted_resp] = resp[1]
+                else:
+                    response_dict[formatted_resp] = resp[1]
 
-        for resp in response:  # add to set to prevent duplicates
-            formatted_resp = TweetFetcher.format_response(resp[0])
-            if formatted_resp not in responses:
-                responses.add(formatted_resp)
-                response_dict[formatted_resp] = resp[1]
-            else:
-                response_dict[formatted_resp] = resp[1]
+            TweetFetcher.write_to_csv(response_dict, 'live-tweets.csv', category,start_date2)
 
-        TweetFetcher.write_to_csv(response_dict, 'live-tweets.csv', category,start_date2)
+        keywords_list = reddit_keywords[category]  
+        for keyword in keywords_list:  
+            sub_count = 0
+            sub_stats = {}
+            sub_reddit = keyword
+            key_word = keyword
 
-    keywords_list = reddit_keywords[category]  
-    for keyword in keywords_list:  
-      sub_count = 0
-      sub_stats = {}
-      sub_reddit = keyword
-      key_word = keyword
+            data = RedditFetcher.get_pushshift_data(key_word, after, before, sub_reddit)
+            #print(data)
+            max_count = 3
+            count = 0
+            while len(data) > 0 and count < max_count:
+                print('count ', count)
+                for submission in data:
+                    RedditFetcher.collect_sub_data(submission,sub_stats)
+                    sub_count += 1
 
-      data = RedditFetcher.get_pushshift_data(key_word, after, before, sub_reddit)
-      #print(data)
-      max_count = 3
-      count = 0
-      while len(data) > 0 and count < max_count:
-          print('count ', count)
-          for submission in data:
-              RedditFetcher.collect_sub_data(submission,sub_stats)
-              sub_count += 1
+                #print(len(data))
+                print(str(datetime.datetime.fromtimestamp(data[-1]['created_utc'])))
+                after = data[-1]['created_utc']
+                data = RedditFetcher.get_pushshift_data(key_word, after, before, sub_reddit)
+                # print(data)
+                # print(data['data'][0]['author'])
+                count = count + 1
 
-          #print(len(data))
-          print(str(datetime.datetime.fromtimestamp(data[-1]['created_utc'])))
-          after = data[-1]['created_utc']
-          data = RedditFetcher.get_pushshift_data(key_word, after, before, sub_reddit)
-          # print(data)
-          # print(data['data'][0]['author'])
-          count = count + 1
-
-      # keep saving data collected in each iteration
-      RedditFetcher.write_subs_to_file(category,'live-reddits.csv',sub_stats)
+            # keep saving data collected in each iteration
+            RedditFetcher.write_subs_to_file(category,'live-reddits.csv',sub_stats)
 
 Liveaggregate.initModel()
 d=dict()
 for i in ticker_list:
-    print(i)
+    # print(i)
     tfile=i+'_live-tweets.csv'
     rfile=i+'_live-reddits.csv'
     df=Liveaggregate.readDf(tfile,rfile)
@@ -145,7 +148,8 @@ for i in ticker_list:
     d[ticker_list[i][0]]=mdf
 #print(d)
 
-
+print()
+print()
 maxvalues = dict()
 minvalues = dict()
 maxvalues['TSLA'] = {
@@ -232,7 +236,7 @@ def normalize():
 
 
 norms_df = normalize()
-print("Norms df\n",norms_df)
+#print("Norms df\n",norms_df)
 for category in ticker_list.keys():
     ticker = ticker_list[category][0]
     for output_label in ['close', 'high', 'low']:
@@ -248,14 +252,16 @@ for category in ticker_list.keys():
         #   print(type(norms_df[ticker].loc[0,col]))
         #   print(type(minvalues[ticker][col]))
         #   print(type(maxvalues[ticker][col]))
-          norms_df[ticker].loc[0,col] = (norms_df[ticker].loc[0,col] - minvalues[ticker][col]) / (maxvalues[ticker][col] - minvalues[ticker][col])
+          if(output_label == 'close'):
+            norms_df[ticker].loc[0,col] = (norms_df[ticker].loc[0,col] - minvalues[ticker][col]) / (maxvalues[ticker][col] - minvalues[ticker][col])
       #print(norms_df[ticker][0:1])
       y_pred = model.predict(norms_df[ticker][0:1])
       #print(type(y_pred))
       #y_pred[0] = (y_pred[0] - minvalues[ticker][output_label]) / (maxvalues[ticker][output_label] - minvalues[ticker][output_label])
       val = y_pred[0] * (maxvalues[ticker][output_label] - minvalues[ticker][output_label]) + minvalues[ticker][output_label]
-      print(f"PREDICTION OF {output_label} OF {ticker} : ",val)
+      print(f"**********\tPredicted {output_label} value of {ticker} :   ",val,"\t**********")
 
-
+print()
+print()
 
 
