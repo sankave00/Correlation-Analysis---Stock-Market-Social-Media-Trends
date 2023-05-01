@@ -1,0 +1,116 @@
+KAFKA SETUP
+
+Apache Kafka
+
+Apache Kafka was downloaded and placed in the C drive of the system. 
+The version of Kafka adopted is 2.13-2.4.0
+
+Configuration
+
+The zip file of Kafka is downloaded and extracted in the C drive using WinRaR.
+Before using Kafka, some environment changes need to be adopted.
+Inside the extracted Kafka folder, the configurations of Kafka and Zookeeper are present in server.properties and zookeeper.properties respectively.
+In server.properties, the log.dirs value has to be changed from the default to any
+specific directory path where the log files need to be stored. 
+The advertised.listeners value needs to be set to PLAINTEXT://localhost:9092 to
+ensure that the kafka server runs locally in the machine on port number 9092.
+The zookeeper.connect value needs to be set to localhost:2181 to ensure that the
+zookeeper server runs on the local machine using the port 2181.
+Next in the zookeeper.properties file the value of dataDir needs to be set to the
+directory where the zookeeper stores the logs. 
+Ensure that the zookeeper port is set to 2181.
+
+CMAK (GUI)
+
+CMAK can be installed into the environment by cloning its GitHub repository into the C drive of the system using
+the command git clone https://github.com/yahoo/CMAK
+
+Configuration
+
+After the repository is cloned, verify the installation of Java version as using
+CMAK on Windows requires the installation of GraalVM which is a virtual
+machine on which the CMAK is deployed. For GraalVM to be detected, the
+system needs to have OpenJDK 11.0+ installed. Then add the following to the
+Path variable in the system environment variables:
+C:/Users/Arshath/graalvm-ce-java11-22.3.1/bin .
+After installing and verifying the mentioned steps, use the command line and move into the directory and
+perform the following commands that can be used to setup the CMAK
+application:
+• cd CMAK/
+• sbt -Djdk.lang.Process.allowAmbiguousCommands=true
+• clean dist
+
+This creates a folder named universal inside the target folder inside CMAK.
+Inside this folder structure is present the CMAK folder named cmak-3.0.0.7.
+Unzip this folder using WinRaR. Now move into this directory and make the
+following changes to the application.conf file which manages all the
+configurations of the CMAK service:
+• Remove the line cmak.zkhosts=”kafka-manager-zookeeper:2181”
+• Replace it with cmak.zkhosts=”localhost:2181”
+
+SPARK SETUP
+
+Apache Spark is downloaded and kept in the
+C drive of the system. The version used is spark-3.3.2.
+Pyspark application can be run using Jupyter notebook for which python3, pip, jupyter notebook, scala, py4j are
+required.
+
+Configuration
+
+For Windows OS, a separate winutils.exe file is required and the version of the file
+depends on the Hadoop version that the installation of Spark accompanies. While
+downloading Spark zip file, choose Hadoop 2.7 version and its corresponding
+winutils.exe file can be downloaded from the repository
+https://github.com/steveloughran/winutils.
+Create a directory structure as Hadoop inside which another bin folder and place
+this winutils.exe file inside this.
+The downloaded zip file of Apache Spark is extracted using WinRaR and stored
+in the C drive. The following Environment variables need to be set to ensure the
+running of Apache Spark:
+• HADOOP HOME = C:/Users/Username/Hadoop
+• PYSPARK HOME = Path of the python executable file in the system
+• PYSPARK PYTHON = python
+• SPARK HOME = C:/Users/Username/spark-3.3.2-bin-hadoop2
+• PYTHONPATH=%SPARK HOME%/python;
+%SPARK HOME%/python/lib/py4j-0.10.9.5-src.zip; %PYTHONPATH%
+• PATH = %HADOOP HOME%/bin
+• PATH = C:/Users/Username/spark-3.3.2-bin-hadoop2/bin
+PySpark is not found in the system path by default but the requirement is such that
+it must be used everywhere, even outside the location of its installation. Thus the
+findspark package must be installed so that pyspark can be used from any directory.
+The following code snippet can be used to make sure of the working of pyspark:
+
+import findspark
+findspark.init(’C:/Users/Username/spark-3.3.2-bin-hadoop2’)
+import pyspark
+
+RUNNING KAFKA, CMAK
+
+Since the existing pipeline was suited to Linux based systems, the .sh files (shell
+script files) can be run. But now, as the environment is windows, the .bat files that
+are present inside bin -> windows directory have to be run.
+
+Apache Kafka
+
+To start Kafka server, Apache Zookeeper must have been started before that in the
+background. To start Apache zookeeper, execute the following commands:
+• cd C:/Users/Username/kafka 2.13-3.4.0
+• ./bin/windows/zookeeper-server-start.bat ./config/zookeeper.properties
+Now that zookeeper is up and running, start Apache Kafka server using the
+commands:
+• cd C:/Users/Username/kafka 2.13-3.4.0
+• set JMX PORT=8004
+• ./bin/windows/kafka-server-start.bat ./config/server.properties
+
+Creation of Clusters & Topics
+
+To enable ease of use and better management, the CMAK tools provides a GUI
+that can be used for creation of clusters and topics. 
+To start the CMAK web interface, use the following command:
+• cd C:/Users/Username/CMAK/target/universal/cmak-3.0.0.7
+• ./bin/cmak -Dconfig.file=conf/application.conf -Dhttp.port=8080
+
+This opens the web interface on http://localhost:8080
+Using the UI, cluster can be created and then a topic can be created. The zookeeper
+host value must be set to localhost:2181. Furthermore, the features of JMX polling
+and Poll Consumer Information must be set
